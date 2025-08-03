@@ -1,0 +1,1235 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FWT - Wordle</title>
+    <link rel="shortcut icon" href="https://media.discordapp.net/attachments/1337508604743389355/1401045861223632926/FWT_LOGO-removebg-preview.png?ex=688ed923&is=688d87a3&hm=275b57644fb01d8c9ebaa82b14af4b474c89692c715000999f140903eb52bdc1&=&format=webp&quality=lossless" type="image/x-icon">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'fifa-blue': '#1A365D',
+                        'fifa-light-blue': '#2B4C7E',
+                        'fifa-accent': '#3B82F6',
+                        'fifa-white': '#ffffff',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f0f4f8;
+            background-image: radial-gradient(#2B4C7E 0.5px, transparent 0.5px), radial-gradient(#2B4C7E 0.5px, #f0f4f8 0.5px);
+            background-size: 20px 20px;
+            background-position: 0 0, 10px 10px;
+        }
+        
+        .header-glow {
+            position: relative;
+        }
+        
+        .header-glow::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #3B82F6, transparent);
+        }
+        
+        .title-highlight {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .title-highlight::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 8px;
+            bottom: 0;
+            left: 0;
+            background-color: rgba(59, 130, 246, 0.3);
+            z-index: -1;
+            transform: skewX(-15deg);
+        }
+        
+        .social-icon {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .social-icon:hover {
+            transform: translateY(-3px);
+            color: #3B82F6;
+        }
+        
+        .social-icon::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            bottom: -2px;
+            left: 0;
+            background-color: #3B82F6;
+            transform: scaleX(0);
+            transform-origin: bottom right;
+            transition: transform 0.3s ease;
+        }
+        
+        .social-icon:hover::after {
+            transform: scaleX(1);
+            transform-origin: bottom left;
+        }
+        
+        .emoji-box {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            margin-right: 8px;
+            border-radius: 4px;
+        }
+        
+        .start-button {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .start-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
+        }
+        
+        .start-button:hover::before {
+            left: 100%;
+        }
+        
+        .game-info-card {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .game-info-card::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 100px;
+            height: 100px;
+            background-color: rgba(59, 130, 246, 0.1);
+            border-radius: 50%;
+        }
+        
+        .game-info-card::after {
+            content: '';
+            position: absolute;
+            bottom: -30px;
+            left: -30px;
+            width: 80px;
+            height: 80px;
+            background-color: rgba(59, 130, 246, 0.1);
+            border-radius: 50%;
+        }
+        
+        /* Wordle Game Styles */
+        .letter-box {
+            width: 60px;
+            height: 60px;
+            border: 2px solid #d1d5db;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            transition: all 0.2s ease;
+        }
+        
+        .keyboard-row {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 8px;
+        }
+        
+        .key {
+            min-width: 40px;
+            height: 58px;
+            margin: 0 4px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #e5e7eb;
+            font-weight: bold;
+            cursor: pointer;
+            user-select: none;
+            text-transform: uppercase;
+            transition: all 0.2s ease;
+        }
+        
+        .key:hover {
+            background-color: #d1d5db;
+        }
+        
+        .key-wide {
+            min-width: 65px;
+        }
+        
+        .correct {
+            background-color: #10b981;
+            color: white;
+            border-color: #10b981;
+        }
+        
+        .present {
+            background-color: #f59e0b;
+            color: white;
+            border-color: #f59e0b;
+        }
+        
+        .absent {
+            background-color: #6b7280;
+            color: white;
+            border-color: #6b7280;
+        }
+        
+        .shake {
+            animation: shake 0.5s;
+        }
+        
+        .flip {
+            animation: flip 0.5s;
+        }
+        
+        .bounce {
+            animation: bounce 0.5s;
+        }
+        
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            10% { transform: translateX(-5px); }
+            30% { transform: translateX(5px); }
+            50% { transform: translateX(-5px); }
+            70% { transform: translateX(5px); }
+            90% { transform: translateX(-5px); }
+            100% { transform: translateX(0); }
+        }
+        
+        @keyframes flip {
+            0% { transform: rotateX(0); }
+            50% { transform: rotateX(90deg); }
+            100% { transform: rotateX(0); }
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.5s forwards;
+        }
+        
+        .fade-out {
+            animation: fadeOut 0.5s forwards;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+        
+        /* Stats Modal Styles */
+        .stats-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+        }
+        /* Weekly Victory Distribution Styles */
+        .stats-distribution {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            margin: 20px 0;
+        }
+
+        .stats-row {
+            display: flex;
+            align-items: center;
+            height: 22px;
+            gap: 8px;
+        }
+
+        .stats-number {
+            width: 12px;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .stats-day-label {
+            width: 30px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 500;
+            color: #6b7280;
+        }
+
+        .stats-bar-container {
+            flex: 1;
+            height: 20px;
+            background-color: #f3f4f6;
+            border-radius: 2px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .stats-bar {
+            height: 100%;
+            background-color: #6b7280;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 4px;
+            min-width: 0;
+        }
+
+        .stats-bar.highlight-bar {
+            background-color: #16a34a !important;
+        }
+
+        .stats-bar-value {
+            color: white;
+            font-size: 12px;
+            font-weight: 600;
+            min-width: 12px;
+            text-align: center;
+        }
+
+        .stats-content {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+            transform: translateY(20px);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+        
+        .stats-modal.show .stats-content {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        .stats-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .stats-body {
+            padding: 20px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            margin-bottom: 24px;
+        }
+        
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1A365D;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 4px;
+        }
+        
+        .bar-chart {
+            display: flex;
+            align-items: flex-end;
+            height: 140px;
+            gap: 8px;
+        }
+        
+        .bar-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100%;
+        }
+        
+        .bar {
+            width: 100%;
+            background-color: #3B82F6;
+            border-radius: 4px 4px 0 0;
+            transition: height 1s ease;
+            min-height: 0;
+        }
+        
+        .bar-label {
+            margin-top: 8px;
+            font-weight: 500;
+            color: #4b5563;
+        }
+        
+        .close-button {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #6b7280;
+            transition: color 0.2s;
+        }
+        
+        .close-button:hover {
+            color: #ef4444;
+        }
+        
+        .active-day {
+            color: #3B82F6;
+            font-weight: bold;
+        }
+        
+        .highlight-bar {
+            background-color: #10b981;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="bg-fifa-white py-5 shadow-md header-glow sticky top-0 z-10">
+        <div class="container mx-auto px-4 flex justify-between items-center">
+            <div class="w-1/3 flex items-center">
+                <a href="index.html" class="flex items-center">
+                    <div class="w-10 h-10 rounded-full bg-fifa-blue flex items-center justify-center text-white">
+                        <i class="fas fa-futbol"></i>
+                    </div>
+                </a>
+            </div>
+            
+            <div class="w-1/3 flex justify-center">
+                <a href="index.html" class="inline-block">
+                    <h1 class="text-3xl font-bold text-fifa-blue flex items-center">
+                        <span>TOUCH</span>
+                        <span class="text-fifa-accent relative ml-1">
+                            11
+                            <svg class="absolute -top-1 -right-3 w-4 h-4 text-fifa-accent" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"></path>
+                            </svg>
+                        </span>
+                    </h1>
+                </a>
+            </div>
+            
+            <div class="w-1/3 flex justify-end space-x-5">
+                <a href="#" class="social-icon text-gray-600 hover:text-fifa-blue transition-colors">
+                    <i class="fab fa-tiktok text-xl"></i>
+                </a>
+                <a href="#" class="social-icon text-gray-600 hover:text-fifa-blue transition-colors">
+                    <i class="fab fa-youtube text-xl"></i>
+                </a>
+                <a href="#" class="social-icon text-gray-600 hover:text-fifa-blue transition-colors">
+                    <i class="fab fa-twitch text-xl"></i>
+                </a>
+                <a href="#" class="social-icon text-gray-600 hover:text-fifa-blue transition-colors">
+                    <i class="fab fa-discord text-xl"></i>
+                </a>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-12">
+        <!-- Game Title -->
+        <div class="text-center mb-10">
+            <h1 class="text-4xl font-bold text-fifa-blue mb-2">TOUCH11 <span class="text-fifa-accent">WORDLE</span></h1>
+            <div class="w-24 h-1 bg-fifa-accent mx-auto"></div>
+        </div>
+        
+        <!-- Game Info Section - Initially visible -->
+        <div id="gameInfoSection" class="max-w-5xl mx-auto">
+            <!-- Game Info Card -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden game-info-card">
+                <div class="flex flex-col md:flex-row">
+                    <!-- Left side - Image placeholder -->
+                    <div class="md:w-2/5 bg-gradient-to-br from-fifa-blue to-fifa-light-blue p-8 flex items-center justify-center relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-full h-full opacity-20">
+                            <div class="absolute top-10 left-10 w-20 h-20 rounded-full bg-white/10"></div>
+                            <div class="absolute bottom-20 right-20 w-32 h-32 rounded-full bg-white/10"></div>
+                            <div class="absolute top-1/2 left-1/4 w-12 h-12 rounded-full bg-white/20"></div>
+                        </div>
+                        
+                        <div class="relative z-10 text-center">
+                            <div class="w-32 h-32 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                                <svg class="w-20 h-20 text-white" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M7 11H17V13H7V11Z" fill="currentColor" />
+                                    <path d="M12 7H14V17H12V7Z" fill="currentColor" />
+                                    <path fill-rule="evenodd" clip-rule="evenodd" d="M12 23C18.0751 23 23 18.0751 23 12C23 5.92487 18.0751 1 12 1C5.92487 1 1 5.92487 1 12C1 18.0751 5.92487 23 12 23ZM12 21C16.9706 21 21 16.9706 21 12C21 7.02944 16.9706 3 12 3C7.02944 3 3 7.02944 3 12C3 16.9706 7.02944 21 12 21Z" fill="currentColor" />
+                                </svg>
+                            </div>
+                            
+                            <h3 class="text-2xl font-bold text-white mb-2">Football Challenge</h3>
+                            <p class="text-white/80">Test your knowledge of FWT players</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Right side - Game explanation -->
+                    <div class="md:w-3/5 p-8 md:p-12">
+                        <h2 class="text-2xl font-bold text-fifa-blue mb-6">How to Play</h2>
+                        
+                        <p class="text-gray-700 mb-6 leading-relaxed text-lg">
+                            Football Wordle is a game where your goal is to guess the footballer's name in 6 tries or less. After each guess, you'll get feedback:
+                        </p>
+                        
+                        <div class="mb-8 bg-gray-50 p-6 rounded-lg">
+                            <div class="flex items-center mb-4">
+                                <div class="emoji-box bg-green-500 text-white font-bold">🟩</div>
+                                <span class="text-gray-800 font-medium">Green: right letter, right spot</span>
+                            </div>
+                            <div class="flex items-center">
+                                <div class="emoji-box bg-yellow-500 text-white font-bold">🟨</div>
+                                <span class="text-gray-800 font-medium">Yellow: right letter, wrong spot</span>
+                            </div>
+                        </div>
+                        
+                        <p class="text-gray-700 mb-8 leading-relaxed">
+                            To help you out, the keyboard highlights letters you've already used, making it easier to track your progress and make strategic guesses.
+                        </p>
+                        
+                        <button id="startGameBtn" class="block w-full bg-fifa-accent hover:bg-blue-700 text-white font-bold py-4 px-6 rounded-lg text-center transition duration-300 start-button">
+                            <span class="flex items-center justify-center">
+                                <span class="mr-2">Start Game</span>
+                                <i class="fas fa-play"></i>
+                            </span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Additional Info -->
+            <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white p-6 rounded-xl shadow-md">
+                    <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mb-4">
+                        <i class="fas fa-clock text-green-600"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-fifa-blue mb-2">Daily Challenge</h3>
+                    <p class="text-gray-600">A new footballer to guess every day. Come back daily to test your knowledge!</p>
+                </div>
+                
+                <div class="bg-white p-6 rounded-xl shadow-md">
+                    <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mb-4">
+                        <i class="fas fa-share-alt text-blue-600"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-fifa-blue mb-2">Share Results</h3>
+                    <p class="text-gray-600">Challenge your friends by sharing your results and see who can guess in fewer tries.</p>
+                </div>
+                
+                <div class="bg-white p-6 rounded-xl shadow-md">
+                    <div class="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center mb-4">
+                        <i class="fas fa-trophy text-purple-600"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-fifa-blue mb-2">Track Progress</h3>
+                    <p class="text-gray-600">Keep track of your stats and see how your guessing skills improve over time.</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Wordle Game Section - Initially hidden -->
+        <div id="gameSection" class="max-w-3xl mx-auto hidden">
+            <!-- Game Board -->
+            <div class="bg-white rounded-xl shadow-lg p-8 mb-8">
+                <div id="gameBoard" class="grid grid-rows-6 gap-2 mb-8">
+                    <!-- Game board will be dynamically generated -->
+                </div>
+                
+                <!-- Message Display -->
+                <div id="messageDisplay" class="text-center mb-8 h-8 font-medium text-fifa-blue"></div>
+                
+                <!-- Keyboard -->
+                <div class="keyboard mt-6">
+                    <!-- Row 1: Q-P -->
+                    <div class="keyboard-row">
+                        <div class="key" data-key="q">Q</div>
+                        <div class="key" data-key="w">W</div>
+                        <div class="key" data-key="e">E</div>
+                        <div class="key" data-key="r">R</div>
+                        <div class="key" data-key="t">T</div>
+                        <div class="key" data-key="y">Y</div>
+                        <div class="key" data-key="u">U</div>
+                        <div class="key" data-key="i">I</div>
+                        <div class="key" data-key="o">O</div>
+                        <div class="key" data-key="p">P</div>
+                    </div>
+                    
+                    <!-- Row 2: A-L -->
+                    <div class="keyboard-row">
+                        <div class="key" data-key="a">A</div>
+                        <div class="key" data-key="s">S</div>
+                        <div class="key" data-key="d">D</div>
+                        <div class="key" data-key="f">F</div>
+                        <div class="key" data-key="g">G</div>
+                        <div class="key" data-key="h">H</div>
+                        <div class="key" data-key="j">J</div>
+                        <div class="key" data-key="k">K</div>
+                        <div class="key" data-key="l">L</div>
+                        <div class="key" data-key="ñ">Ñ</div>
+                    </div>
+                    
+                    <!-- Row 3: Enter, Z-M, Backspace -->
+                    <div class="keyboard-row">
+                        <div class="key key-wide" data-key="enter">Enter</div>
+                        <div class="key" data-key="z">Z</div>
+                        <div class="key" data-key="x">X</div>
+                        <div class="key" data-key="c">C</div>
+                        <div class="key" data-key="v">V</div>
+                        <div class="key" data-key="b">B</div>
+                        <div class="key" data-key="n">N</div>
+                        <div class="key" data-key="m">M</div>
+                        <div class="key key-wide" data-key="backspace">
+                            <i class="fas fa-backspace"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <!-- Stats Modal -->
+    <div id="statsModal" class="stats-modal">
+        <div class="stats-content">
+            <div class="stats-header">
+                <h2 class="text-xl font-bold text-fifa-blue">Statistics</h2>
+                <button id="closeStatsBtn" class="close-button">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="stats-body">
+                <!-- Stats Grid -->
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div id="statPlayed" class="stat-value">0</div>
+                        <div class="stat-label">Played</div>
+                    </div>
+                    <div class="stat-item">
+                        <div id="statWins" class="stat-value">0</div>
+                        <div class="stat-label">Wins</div>
+                    </div>
+                    <div class="stat-item">
+                        <div id="statPercentage" class="stat-value">0%</div>
+                        <div class="stat-label">Win %</div>
+                    </div>
+                    <div class="stat-item">
+                        <div id="statStreak" class="stat-value">0</div>
+                        <div class="stat-label">Streak</div>
+                    </div>
+                    <div class="stat-item">
+                        <div id="statMaxStreak" class="stat-value">0</div>
+                        <div class="stat-label">Max Streak</div>
+                    </div>
+                </div>
+                
+                <!-- Weekly Victory Distribution -->
+                <div class="stats-distribution">
+                    <h3 class="text-sm font-semibold text-fifa-blue mb-3">Weekly Victory Distribution</h3>
+                    <div class="stats-row">
+                        <div class="stats-number">1</div>
+                        <div class="stats-day-label">Mon</div>
+                        <div class="stats-bar-container">
+                            <div class="stats-bar" id="weekBar1">
+                                <span class="stats-bar-value">0</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="stats-row">
+                        <div class="stats-number">2</div>
+                        <div class="stats-day-label">Tue</div>
+                        <div class="stats-bar-container">
+                            <div class="stats-bar" id="weekBar2">
+                                <span class="stats-bar-value">0</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="stats-row">
+                        <div class="stats-number">3</div>
+                        <div class="stats-day-label">Wed</div>
+                        <div class="stats-bar-container">
+                            <div class="stats-bar" id="weekBar3">
+                                <span class="stats-bar-value">0</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="stats-row">
+                        <div class="stats-number">4</div>
+                        <div class="stats-day-label">Thu</div>
+                        <div class="stats-bar-container">
+                            <div class="stats-bar" id="weekBar4">
+                                <span class="stats-bar-value">0</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="stats-row">
+                        <div class="stats-number">5</div>
+                        <div class="stats-day-label">Fri</div>
+                        <div class="stats-bar-container">
+                            <div class="stats-bar" id="weekBar5">
+                                <span class="stats-bar-value">0</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="stats-row">
+                        <div class="stats-number">6</div>
+                        <div class="stats-day-label">Sat</div>
+                        <div class="stats-bar-container">
+                            <div class="stats-bar" id="weekBar6">
+                                <span class="stats-bar-value">0</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="stats-row">
+                        <div class="stats-number">7</div>
+                        <div class="stats-day-label">Sun</div>
+                        <div class="stats-bar-container">
+                            <div class="stats-bar" id="weekBar7">
+                                <span class="stats-bar-value">0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <footer class="bg-fifa-blue text-white mt-16 py-8">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <h2 class="text-xl font-bold">TOUCH<span class="text-fifa-accent">11</span></h2>
+                    <p class="text-sm text-gray-300 mt-1">FWT Games</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+    <script src="dailyGameManager.js"></script>
+    <script>
+            document.addEventListener('DOMContentLoaded', async function() {
+                const gameInfoSection = document.getElementById('gameInfoSection');
+                const gameSection = document.getElementById('gameSection');
+                const startGameBtn = document.getElementById('startGameBtn');
+                const messageDisplay = document.getElementById('messageDisplay');
+                const gameBoard = document.getElementById('gameBoard');
+                const statsModal = document.getElementById('statsModal');
+                const closeStatsBtn = document.getElementById('closeStatsBtn');
+
+                // Initialize the daily game manager
+                const manager = window.dailyGameManager;
+                await manager.init();
+
+                // Get today's word and game state
+                const dailyWord = await manager.todaysWord();
+                let gameState = manager.loadGameState(dailyWord);
+
+                // Game state variables - now using daily system
+                let currentRow = gameState.attempts.length;
+                let currentCol = 0;
+                let gameOver = gameState.over;
+                let targetWord = gameState.word;
+                let wordLength = targetWord.length;
+                let hasWon = gameState.won;
+
+                // Stats variables (keep existing localStorage system for global stats)
+                // Stats variables - MODIFIED to include weekly victories
+                let stats = {
+                    played: 0,
+                    wins: 0,
+                    losses: 0,
+                    currentStreak: 0,
+                    maxStreak: 0,
+                    guessDistribution: [0, 0, 0, 0, 0, 0], 
+                    weeklyVictories: [0, 0, 0, 0, 0, 0, 0] 
+                };
+                
+                // Load stats from localStorage if available - MODIFIED for weekly victories
+                if (localStorage.getItem('touch11WordleStats')) {
+                    const loadedStats = JSON.parse(localStorage.getItem('touch11WordleStats'));
+                    stats = {
+                        played: loadedStats.played || 0,
+                        wins: loadedStats.wins || 0,
+                        losses: loadedStats.losses || 0,
+                        currentStreak: loadedStats.currentStreak || 0,
+                        maxStreak: loadedStats.maxStreak || 0,
+                        guessDistribution: loadedStats.guessDistribution || [0, 0, 0, 0, 0, 0],
+                        weeklyVictories: loadedStats.weeklyVictories || [0, 0, 0, 0, 0, 0, 0] // Initialize if not exists
+                    };
+                }
+
+
+                // Function to save current game progress
+                function saveProgress() {
+                    gameState.attempts = getCurrentAttempts();
+                    gameState.over = gameOver;
+                    gameState.won = hasWon;
+                    manager.saveGameState(gameState);
+                }
+
+                // Function to get current day of week (1=Monday, 7=Sunday)
+                function getCurrentDayOfWeek() {
+                    const now = new Date();
+                    // Adjust to Colombian time
+                    const colombianTime = new Date(now.getTime() + (-5 * 60 * 60 * 1000));
+                    const dayOfWeek = colombianTime.getDay(); // 0=Sunday, 1=Monday, ... 6=Saturday
+                    // Convert to our system: 1=Monday, 7=Sunday
+                    return dayOfWeek === 0 ? 7 : dayOfWeek;
+                }
+
+                // Function to update weekly victories when player wins
+                function updateWeeklyVictories() {
+                    const currentDay = getCurrentDayOfWeek(); // 1-7
+                    const arrayIndex = currentDay === 7 ? 6 : currentDay - 1; // Convert to 0-6 for array
+                    stats.weeklyVictories[arrayIndex]++;
+
+                    console.log(`Victory recorded for day ${currentDay}. Total victories on this day: ${stats.weeklyVictories[arrayIndex]}`);
+                }
+
+                // Function to update the weekly victory bars
+                function updateWeeklyBars() {
+                    const maxValue = Math.max(...stats.weeklyVictories, 1);
+                    const currentDay = getCurrentDayOfWeek();
+
+                    for (let i = 1; i <= 7; i++) {
+                        const barElement = document.getElementById(`weekBar${i}`);
+                        const valueElement = barElement.querySelector('.stats-bar-value');
+                        const arrayIndex = i === 7 ? 6 : i - 1; // Convert day number to array index
+                        const value = stats.weeklyVictories[arrayIndex];
+
+                        // Calculate width percentage (minimum 7% if there's a value)
+                        let widthPercent = 0;
+                        if (value > 0) {
+                            widthPercent = Math.max(7, (value / maxValue) * 100);
+                        }
+
+                        // Reset classes
+                        barElement.classList.remove('highlight-bar');
+
+                        // Set width and value
+                        barElement.style.width = widthPercent + '%';
+                        valueElement.textContent = value;
+
+                        // Highlight current day if player just won today
+                        if (gameOver && hasWon && i === currentDay) {
+                            barElement.classList.add('highlight-bar');
+                        }
+
+                        // Hide value if zero
+                        if (value === 0) {
+                            barElement.style.width = '0%';
+                            valueElement.style.display = 'none';
+                        } else {
+                            valueElement.style.display = 'block';
+                        }
+                    }
+                }
+
+                // Function to get current attempts from the board
+                function getCurrentAttempts() {
+                    const attempts = [];
+                    for (let row = 0; row < currentRow; row++) {
+                        let attempt = '';
+                        for (let col = 0; col < wordLength; col++) {
+                            const box = document.querySelector(`.letter-box[data-row="${row}"][data-col="${col}"]`);
+                            attempt += box.textContent || '';
+                        }
+                        if (attempt.length === wordLength) {
+                            attempts.push(attempt);
+                        }
+                    }
+                    return attempts;
+                }
+
+                // Function to restore game state to the board
+                function restoreGameState() {
+                    if (gameState.attempts && gameState.attempts.length > 0) {
+                        // Restore previous attempts
+                        gameState.attempts.forEach((attempt, rowIndex) => {
+                            for (let colIndex = 0; colIndex < attempt.length; colIndex++) {
+                                const box = document.querySelector(`.letter-box[data-row="${rowIndex}"][data-col="${colIndex}"]`);
+                                box.textContent = attempt[colIndex];
+                            }
+                            // Apply the styling for this guess
+                            setTimeout(() => {
+                                checkGuessVisual(attempt, rowIndex, false);
+                            }, 100);
+                        });
+
+                        // Update keyboard state based on previous attempts
+                        setTimeout(() => {
+                            updateKeyboardFromAttempts();
+                        }, 500);
+                    }
+
+                    if (gameState.over) {
+                        if (gameState.won) {
+                            setTimeout(() => {
+                                showMessage("You already completed today's puzzle! 🎉");
+                                showStatsModal();
+                            }, 1000);
+                        } else {
+                            setTimeout(() => {
+                                showMessage(`You already completed today's puzzle. The answer was ${targetWord}`);
+                                showStatsModal();
+                            }, 1000);
+                        }
+                    }
+                }
+
+                // Function to update keyboard based on previous attempts
+                function updateKeyboardFromAttempts() {
+                    const targetLetters = targetWord.split('');
+
+                    gameState.attempts.forEach(attempt => {
+                        const guessLetters = attempt.split('');
+
+                        for (let i = 0; i < wordLength; i++) {
+                            const letter = guessLetters[i];
+                            const key = document.querySelector(`.key[data-key="${letter.toLowerCase()}"]`);
+
+                            if (letter === targetLetters[i]) {
+                                key.classList.add('correct');
+                            } else if (targetLetters.includes(letter)) {
+                                if (!key.classList.contains('correct')) {
+                                    key.classList.add('present');
+                                }
+                            } else {
+                                key.classList.add('absent');
+                            }
+                        }
+                    });
+                }
+
+                // Start game button click handler
+                startGameBtn.addEventListener('click', function() {
+                    gameInfoSection.classList.add('fade-out');
+                    setTimeout(() => {
+                        gameInfoSection.classList.add('hidden');
+                        gameSection.classList.remove('hidden');
+                        gameSection.classList.add('fade-in');
+                        initGame();
+                    }, 500);
+                });
+
+                // Close stats modal button click handler
+                closeStatsBtn.addEventListener('click', function() {
+                    statsModal.classList.remove('show');
+                    setTimeout(() => {
+                        statsModal.style.display = 'none';
+                    }, 300);
+                });
+
+                // Initialize the game
+                function initGame() {
+                    // Generate game board based on target word length
+                    generateGameBoard();
+
+                    // Restore previous game state if exists
+                    restoreGameState();
+
+                    // Set up keyboard event listeners
+                    document.querySelectorAll('.key').forEach(key => {
+                        key.addEventListener('click', function() {
+                            const keyValue = this.getAttribute('data-key');
+                            handleKeyPress(keyValue);
+                        });
+                    });
+
+                    // Set up physical keyboard support
+                    document.addEventListener('keydown', function(e) {
+                        const key = e.key.toLowerCase();
+
+                        if (key === 'enter') {
+                            handleKeyPress('enter');
+                        } else if (key === 'backspace') {
+                            handleKeyPress('backspace');
+                        } else if (/^[a-zñ]$/.test(key)) {
+                            handleKeyPress(key);
+                        }
+                    });
+
+                    if (!gameState.over) {
+                        showMessage(`Guess the ${wordLength}-letter footballer name!`);
+                    }
+                }
+
+                // Generate game board based on target word length
+                function generateGameBoard() {
+                    gameBoard.innerHTML = '';
+
+                    for (let i = 0; i < 6; i++) {
+                        const row = document.createElement('div');
+                        row.className = 'flex justify-center gap-2';
+
+                        for (let j = 0; j < wordLength; j++) {
+                            const box = document.createElement('div');
+                            box.className = 'letter-box';
+                            box.setAttribute('data-row', i);
+                            box.setAttribute('data-col', j);
+                            row.appendChild(box);
+                        }
+
+                        gameBoard.appendChild(row);
+                    }
+                }
+
+                // Handle key press
+                function handleKeyPress(key) {
+                    if (gameOver) return;
+
+                    if (key === 'enter') {
+                        submitGuess();
+                    } else if (key === 'backspace') {
+                        deleteLetter();
+                    } else if (currentCol < wordLength) {
+                        addLetter(key);
+                    }
+                }
+
+                // Add letter to the current position
+                function addLetter(letter) {
+                    if (currentCol < wordLength) {
+                        const box = document.querySelector(`.letter-box[data-row="${currentRow}"][data-col="${currentCol}"]`);
+                        box.textContent = letter.toUpperCase();
+                        box.classList.add('bounce');
+                        setTimeout(() => box.classList.remove('bounce'), 300);
+                        currentCol++;
+                    }
+                }
+
+                // Delete letter from the current position
+                function deleteLetter() {
+                    if (currentCol > 0) {
+                        currentCol--;
+                        const box = document.querySelector(`.letter-box[data-row="${currentRow}"][data-col="${currentCol}"]`);
+                        box.textContent = '';
+                    }
+                }
+
+                // Submit the current guess
+                function submitGuess() {
+                    if (currentCol < wordLength) {
+                        showMessage("Not enough letters!");
+                        shakeRow(currentRow);
+                        return;
+                    }
+
+                    // Get the current guess
+                    let guess = '';
+                    for (let i = 0; i < wordLength; i++) {
+                        const box = document.querySelector(`.letter-box[data-row="${currentRow}"][data-col="${i}"]`);
+                        guess += box.textContent;
+                    }
+
+                    // Check the guess
+                    checkGuessVisual(guess, currentRow, true);
+
+                    // Save progress after each guess
+                    setTimeout(() => {
+                        saveProgress();
+                    }, wordLength * 300 + 100);
+
+                    // Move to the next row
+                    currentRow++;
+                    currentCol = 0;
+
+                    // Check if game is over
+                    if (guess === targetWord) {
+                        gameOver = true;
+                        hasWon = true;
+
+                        // Update stats for win
+                        updateStats(true);
+
+                        // Register result with daily manager
+                        manager.registerResult(true);
+
+                        setTimeout(() => {
+                            showMessage("Congratulations! You won! 🎉");
+                            saveProgress(); // Final save
+                            showStatsModal();
+                        }, wordLength * 300 + 500);
+                    } else if (currentRow >= 6) {
+                        gameOver = true;
+                        hasWon = false;
+
+                        // Update stats for loss
+                        updateStats(false);
+
+                        // Register result with daily manager
+                        manager.registerResult(false);
+
+                        setTimeout(() => {
+                            showMessage(`Game over! The answer was ${targetWord}`);
+                            saveProgress(); // Final save
+                            showStatsModal();
+                        }, wordLength * 300 + 500);
+                    }
+                }
+
+                // Check the guess against the target word (visual feedback)
+                function checkGuessVisual(guess, rowIndex, withAnimation = true) {
+                    const targetLetters = targetWord.split('');
+                    const guessLetters = guess.split('');
+
+                    // First pass: mark correct letters
+                    for (let i = 0; i < wordLength; i++) {
+                        const box = document.querySelector(`.letter-box[data-row="${rowIndex}"][data-col="${i}"]`);
+                        const letter = guessLetters[i];
+                        const key = document.querySelector(`.key[data-key="${letter.toLowerCase()}"]`);
+
+                        const applyStyles = () => {
+                            if (withAnimation) {
+                                box.classList.add('flip');
+                            }
+
+                            setTimeout(() => {
+                                if (letter === targetLetters[i]) {
+                                    box.classList.add('correct');
+                                    key.classList.add('correct');
+                                } else if (targetLetters.includes(letter)) {
+                                    box.classList.add('present');
+                                    if (!key.classList.contains('correct')) {
+                                        key.classList.add('present');
+                                    }
+                                } else {
+                                    box.classList.add('absent');
+                                    key.classList.add('absent');
+                                }
+                            }, withAnimation ? 250 : 0);
+                        };
+
+                        if (withAnimation) {
+                            setTimeout(applyStyles, i * 300);
+                        } else {
+                            applyStyles();
+                        }
+                    }
+                }
+
+                // Show a message to the user
+                function showMessage(msg) {
+                    messageDisplay.textContent = msg;
+                    messageDisplay.classList.add('bounce');
+                    setTimeout(() => messageDisplay.classList.remove('bounce'), 300);
+                }
+
+                // Shake a row to indicate an error
+                function shakeRow(row) {
+                    const rowElement = document.querySelector(`.letter-box[data-row="${row}"][data-col="0"]`).parentElement;
+                    rowElement.classList.add('shake');
+                    setTimeout(() => rowElement.classList.remove('shake'), 500);
+                }
+
+                // Update game statistics - MODIFIED to include weekly victories
+                function updateStats(isWin) {
+                    stats.played++;
+
+                    if (isWin) {
+                        stats.wins++;
+                        stats.currentStreak++;
+
+                        // Update max streak if needed
+                        if (stats.currentStreak > stats.maxStreak) {
+                            stats.maxStreak = stats.currentStreak;
+                        }
+
+                        // Update guess distribution based on current row (keep original system)
+                        stats.guessDistribution[currentRow - 1]++;
+
+                        // NEW: Update weekly victories
+                        updateWeeklyVictories();
+                    } else {
+                        stats.losses++;
+                        stats.currentStreak = 0;
+                    }
+
+                    // Save stats to localStorage
+                    localStorage.setItem('touch11WordleStats', JSON.stringify(stats));
+                }
+
+                // Show stats modal - MODIFIED to show weekly bars
+                function showStatsModal() {
+                    // Update stats display
+                    document.getElementById('statPlayed').textContent = stats.played;
+                    document.getElementById('statWins').textContent = stats.wins;
+                    document.getElementById('statPercentage').textContent = stats.played > 0 ? 
+                        Math.round((stats.wins / stats.played) * 100) + '%' : '0%';
+                    document.getElementById('statStreak').textContent = stats.currentStreak;
+                    document.getElementById('statMaxStreak').textContent = stats.maxStreak;
+
+                    // Update weekly victory bars
+                    updateWeeklyBars();
+
+                    // Show modal
+                    statsModal.style.display = 'flex';
+                    setTimeout(() => {
+                        statsModal.classList.add('show');
+                    }, 10);
+                }
+
+                console.log('TOUCH11 Wordle page loaded successfully with daily game system!');
+                console.log('Today\'s word length:', wordLength);
+                console.log('Game state loaded:', gameState);
+            });
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'968b116760cff776',t:'MTc1NDExMTQxNy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
