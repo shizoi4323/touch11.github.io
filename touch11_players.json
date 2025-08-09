@@ -1,0 +1,246 @@
+{
+  "countries": [
+    { "code": "CO", "name": "COLOMBIA" },
+    { "code": "BR", "name": "BRAZIL" },
+    { "code": "MX", "name": "MEXICO" },
+    { "code": "AR", "name": "ARGENTINA" },
+    { "code": "UY", "name": "URUGUAY" },
+    { "code": "EC", "name": "ECUADOR" },
+    { "code": "ES", "name": "ESPAÑA" },
+    { "code": "PE", "name": "PERU" },
+    { "code": "BO", "name": "BOLIVIA" },
+    { "code": "PR", "name": "PUERTO RICO" },
+    { "code": "DO", "name": "REPUBLICA DOMINICANA" },
+    { "code": "US", "name": "USA" },
+    { "code": "CR", "name": "COSTA RICA" },
+    { "code": "PY", "name": "PARAGUAY" },
+    { "code": "PA", "name": "PANAMA" },
+    { "code": "JM", "name": "JAMAICA" },
+    { "code": "VE", "name": "VENEZUELA" },
+    { "code": "PH", "name": "FILIPINAS" },
+    { "code": "SV", "name": "EL SALVADOR" },
+    { "code": "GT", "name": "GUATEMALA" },
+    { "code": "HN", "name": "HONDURAS" },
+    { "code": "CL", "name": "CHILE" },
+    { "code": "CU", "name": "CUBA" },
+    { "code": "AD", "name": "ANDORRA" },
+    { "code": "BE", "name": "BELGICA" },
+    { "code": "PT", "name": "PORTUGAL" }
+  ],
+  "playersByCountry": {
+    "CO": [
+      "SHIZOI", "LITHAN", "PYRA", "PIBBLE", "BULL", "LOLSKG", "RATOYOON", "ELIAS", "MARTINELLI", "JUJOMO", "LUXORYAN", "FTSANTI"
+    ],
+    "BR": [
+      "POLIN"
+    ],
+    "MX": [
+      "XTRATOSKI", "NIKKO", "TAKO", "XIMAST", "IVAN", "LUKY", "COCONUNS", "DYNO", "BALLER", "CHICHA", "TER", "AMANDA"
+    ],
+    "AR": [
+      "KINGALE", "SHADIX", "KRAZY", "DEMIAN", "LAUVADER", "ANGELUIGI", "ZYRO", "DIABETOJR"
+    ],
+    "UY": [
+      "FRANSU", "VERDE", "FROSTBITE", "EMI"
+    ],
+    "EC": [
+      "ILLUSION", "BLUEX", "DAVICHO", "EXIT", "EMILY"
+    ],
+    "ES": [
+      "POLIKITO", "DAVID", "GARAEL", "SANCHO", "ALEX", "DONERKEBAB", "JUAN", "ANSUFATI", "ICY", "HUGO", "MRALEX", "MARIO"
+    ],
+    "PE": [
+      "THOR", "SOPADECARNE", "RABG", "NICKXYZ", "MIAMII", "HXRRYX"
+    ],
+    "BO": [
+      "DRAKZ", "FALOPALEX", "BORIC", "FREN"
+    ],
+    "PR": [
+      "ALONE", "REAPER"
+    ],
+    "DO": [
+      "ZACK", "SAMUU"
+    ],
+    "US": [
+      "RELO", "BRYAN", "DEN"
+    ],
+    "CR": [
+      "ERNI", "PYRO", "NAVAS", "WARRIOR", "LOTTO", "GENGAR", "VANZ"
+    ],
+    "PY": [
+      "ECHEVERRI", "PABLO"
+    ],
+    "PA": [
+      "JAKE", "VICTOR", "DEV"
+    ],
+    "JM": [
+      "SPLITZ"
+    ],
+    "VE": [
+      "FEMUR", "DAHA", "MEZT"
+    ],
+    "PH": [
+      "ETHERIDGE"
+    ],
+    "SV": [
+      "PEACE", "CHINO", "JUSTIN"
+    ],
+    "GT": [
+      "WICHO"
+    ],
+    "HN": [
+      "ZERO"
+    ],
+    "CL": [
+      "MATIGOL", "POLLO", "GOTITA"
+    ],
+    "CU": [
+      "JULIO"
+    ],
+    "AD": [
+      "ALICIA"
+    ],
+    "BE": [
+      "BLACKBEAR"
+    ],
+    "PT": [
+      "WASAKA"
+    ]
+  },
+  "playerPositions": {
+    "SHIZOI": ["RW", "CAM", "CM"],
+    "POLIN": ["LW", "RW", "CM"],
+    "XTRATOSKI": ["LW", "RW", "CM"],
+    "KINGALE": ["LW", "RW", "ST"],
+    "FRANSU": ["GK", "CM", "LW"],
+    "SHADIX": ["GK", "LW"],
+    "ILLUSION": ["CM", "ST"],
+    "POLIKITO": ["RW", "LW", "CM"],
+    "THOR": ["GK", "CM", "LW"],
+    "DAVID": ["RW", "CDM"],
+    "VERDE": ["CDM", "CM", "GK"],
+    "SOPADECARNE": ["CM", "CDM"],
+    "NIKKO": ["GK", "CDM", "ST"],
+    "DRAKZ": ["LW", "RW"],
+    "ALONE": ["LW", "RW"],
+    "TAKO": ["GK"],
+    "BLUEX": ["RW", "LW"],
+    "GARAEL": ["GK", "ST"],
+    "RABG": ["GK", "CDM"],
+    "XIMAST": ["GK"],
+    "ZACK": ["GK", "RW"],
+    "RELO": ["GK", "CDM", "CAM"],
+    "ERNI": ["GK", "CM", "ST"],
+    "IVAN": ["RW", "LW"],
+    "REAPER": ["LW", "RW", "CDM"],
+    "ECHEVERRI": ["RW", "LW"],
+    "KRAZY": ["GK"],
+    "NICKXYZ": ["LW", "RW", "RB"],
+    "BRYAN": ["GK", "RW"],
+    "LITHAN": ["LW", "RW", "CDM"],
+    "PABLO": ["GK", "CM", "LW"],
+    "DAVICHO": ["RW", "LW"],
+    "MIAMII": ["CDM", "LW"],
+    "PYRO": ["LW", "ST"],
+    "JAKE": ["LW", "RW", "ST"],
+    "SPLITZ": ["LW"],
+    "FALOPALEX": ["CDM", "CB", "CM"],
+    "FEMUR": ["CDM"],
+    "SANCHO": ["GK"],
+    "SAMUU": ["LW", "RW"],
+    "DAHA": ["CDM", "ST"],
+    "ETHERIDGE": ["GK"],
+    "PEACE": ["RW"],
+    "WICHO": ["CDM", "RW"],
+    "DEN": ["RW", "LW", "CDM"],
+    "PYRA": ["LW", "RW"],
+    "PIBBLE": ["GK"],
+    "EXIT": ["RW"],
+    "BULL": ["LW", "CDM", "RB"],
+    "LOLSKG": ["CDM", "ST"],
+    "CHINO": ["CDM"],
+    "HXRRYX": ["LW", "RW"],
+    "ALEX": ["RW", "LW", "CM"],
+    "ZERO": ["LW", "RW", "CDM"],
+    "DEMIAN": ["GK"],
+    "LUKY": ["GK", "CDM"],
+    "COCONUNS": ["CDM"],
+    "EMILY": ["ST", "CDM", "GK"],
+    "LAUVADER": ["GK"],
+    "MATIGOL": ["ST", "LW", "RW"],
+    "DONERKEBAB": ["LW", "CDM", "RW"],
+    "RATOYOON": ["CDM"],
+    "DYNO": ["CDM", "GK"],
+    "ELIAS": ["ST"],
+    "JUAN": ["RW"],
+    "BALLER": ["CDM"],
+    "JUSTIN": ["CDM", "LW"],
+    "NAVAS": ["GK"],
+    "VICTOR": ["GK", "LB", "CB"],
+    "ANSUFATI": ["RW", "CDM", "LW"],
+    "MARTINELLI": ["GK", "CDM"],
+    "JUJOMO": ["CF", "ST", "RW"],
+    "POLLO": ["CM", "CDM", "CAM"],
+    "DEV": ["LW", "RW"],
+    "FROSTBITE": ["CDM", "CM", "CAM"],
+    "ICY": ["GK", "CB", "CAM"],
+    "GOTITA": ["CDM", "CM", "CAM"],
+    "BORIC": ["CDM", "CM", "CAM"],
+    "CHICHA": ["LW", "RW", "ST"],
+    "TER": ["LW", "RW", "CM"],
+    "ANGELUIGI": ["LW", "RW"],
+    "WARRIOR": ["GK", "ST"],
+    "LUXORYAN": ["GK"],
+    "FTSANTI": ["CB", "LB", "RB"],
+    "AMANDA": ["CDM", "CB", "LW"],
+    "JULIO": ["LW", "CDM", "CM"],
+    "LOTTO": ["LW", "CDM", "RW"],
+    "HUGO": ["LW", "CDM", "GK"],
+    "ALICIA": ["LW", "GK", "RW"],
+    "MRALEX": ["GK"],
+    "MARIO": ["LW", "CDM", "RW"],
+    "BLACKBEAR": ["GK", "RW"],
+    "GENGAR": ["CM", "CDM", "CAM"],
+    "EMI": ["GK", "CDM"],
+    "ZYRO": ["GK", "ST"],
+    "DIABETOJR": ["LW", "ST", "RW"],
+    "MEZT": ["LW", "CDM", "RW"],
+    "VANZ": ["LW", "CM", "RW"],
+    "FREN": ["LW", "CAM", "RW"],
+    "WASAKA": ["LW", "RW"]
+  },
+  "formations": {
+    "4-3-3": {
+      "name": "Classic 4-3-3",
+      "positions": [
+        { "position": "GK", "row": "goalkeeper" },
+        { "position": "LB", "row": "defense" },
+        { "position": "CB", "row": "defense" },
+        { "position": "CB", "row": "defense" },
+        { "position": "RB", "row": "defense" },
+        { "position": "CDM", "row": "midfield" },
+        { "position": "CM", "row": "midfield" },
+        { "position": "CM", "row": "midfield" },
+        { "position": "LW", "row": "attack" },
+        { "position": "ST", "row": "attack" },
+        { "position": "RW", "row": "attack" }
+      ]
+    },
+    "4-2-3-1": {
+      "name": "Balanced 4-2-3-1",
+      "positions": [
+        { "position": "GK", "row": "goalkeeper" },
+        { "position": "LB", "row": "defense" },
+        { "position": "CB", "row": "defense" },
+        { "position": "CB", "row": "defense" },
+        { "position": "RB", "row": "defense" },
+        { "position": "CDM", "row": "midfield" },
+        { "position": "CDM", "row": "midfield" },
+        { "position": "LW", "row": "attack-mid" },
+        { "position": "CAM", "row": "attack-mid" },
+        { "position": "RW", "row": "attack-mid" },
+        { "position": "ST", "row": "attack" }
+      ]
+    }
+  }
+}

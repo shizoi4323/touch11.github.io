@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FWT - Touch11 Legends</title>
+    <link rel="shortcut icon" href="https://media.discordapp.net/attachments/1337508604743389355/1401045861223632926/FWT_LOGO-removebg-preview.png?ex=68941f23&is=6892cda3&hm=600f7a961ddec5cf4a90ba5395a702c376d31f8f3533957f3fcca94f494ea0b5&=&format=webp&quality=lossless&width=525&height=524" type="image/x-icon">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'fifa-blue': '#1A365D',
+                        'fifa-light-blue': '#2B4C7E',
+                        'fifa-accent': '#3B82F6',
+                        'fifa-white': '#ffffff',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f0f4f8;
+            background-image: radial-gradient(#2B4C7E 0.5px, transparent 0.5px), radial-gradient(#2B4C7E 0.5px, #f0f4f8 0.5px);
+            background-size: 20px 20px;
+            background-position: 0 0, 10px 10px;
+        }
+
+        .formation-slot {
+            width: 70px;
+            height: 50px;
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.9);
+            position: relative;
+            cursor: default;
+            margin: 3px;
+        }
+
+        .formation-slot.filled {
+            border-color: #3B82F6;
+            background: linear-gradient(135deg, #3B82F6, #1E40AF);
+            color: white;
+            border-style: solid;
+        }
+
+        .formation-grid {
+            background: linear-gradient(135deg, #10B981, #059669);
+            border-radius: 15px;
+            padding: 20px;
+            position: relative;
+            min-height: 370px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .game-container {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .game-controls {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 20px;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .country-section {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .country-flag {
+            width: 60px;
+            height: 40px;
+            object-fit: cover;
+            border-radius: 4px;
+            margin: 0 auto 8px auto;
+            border: 1px solid #e5e7eb;
+        }
+
+        .player-input-section {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .player-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .player-input:focus {
+            outline: none;
+            border-color: #3B82F6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .suggestions {
+            max-height: 150px;
+            overflow-y: auto;
+            border: 1px solid #e5e7eb;
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+            background: white;
+        }
+
+        .suggestion-item {
+            padding: 10px 12px;
+            cursor: pointer;
+            border-bottom: 1px solid #f3f4f6;
+            transition: background-color 0.2s ease;
+        }
+
+        .suggestion-item:hover {
+            background-color: #f3f4f6;
+        }
+
+        .suggestion-item.selected {
+            background-color: #3B82F6;
+            color: white;
+        }
+
+        .position-label {
+            font-size: 9px;
+            font-weight: bold;
+            color: #666;
+            margin-bottom: 2px;
+        }
+
+        .player-name {
+            font-size: 10px;
+            font-weight: 600;
+            text-align: center;
+            line-height: 1.1;
+        }
+
+        .formation-4-3-3,
+        .formation-3-5-2,
+        .formation-4-2-3-1,
+        .formation-3-4-3 {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
+            gap: 15px;
+        }
+
+        .formation-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .formation-row.attack,
+        .formation-row.attack-mid,
+        .formation-row.midfield,
+        .formation-row.defense { 
+            justify-content: space-around; 
+        }
+
+        .formation-row.goalkeeper { 
+            justify-content: center; 
+        }
+
+        .message {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 12px 20px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .message.show {
+            opacity: 1;
+        }
+
+        .message.success {
+            background: #10B981;
+        }
+
+        .message.error {
+            background: #EF4444;
+        }
+
+        .message.info {
+            background: #3B82F6;
+        }
+
+        .position-choice-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .position-choice-content {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            max-width: 350px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .position-choice-btn {
+            background: #3B82F6;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            margin: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+        }
+
+        .position-choice-btn:hover {
+            background: #2563EB;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .fade-out {
+            animation: fadeOut 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeOut {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(-20px); }
+        }
+
+        .title-clickable {
+            cursor: pointer;
+        }
+
+        /* Hard Mode Toggle */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: #3B82F6;
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(26px);
+        }
+
+        /* Stats Modal Styles (Same as Wordle) */
+        .stats-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .stats-distribution {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            margin: 20px 0;
+        }
+
+        .stats-row {
+            display: flex;
+            align-items: center;
+            height: 22px;
+            gap: 8px;
+        }
+
+        .stats-number {
+            width: 12px;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .stats-day-label {
+            width: 30px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 500;
+            color: #6b7280;
+        }
+
+        .stats-bar-container {
+            flex: 1;
+            height: 20px;
+            background-color: #f3f4f6;
+            border-radius: 2px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .stats-bar {
+            height: 100%;
+            background-color: #6b7280;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 4px;
+            min-width: 0;
+        }
+
+        .stats-bar.highlight-bar {
+            background-color: #16a34a !important;
+        }
+
+        .stats-bar-value {
+            color: white;
+            font-size: 12px;
+            font-weight: 600;
+            min-width: 12px;
+            text-align: center;
+        }
+
+        .stats-content {
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+            transform: translateY(20px);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .stats-modal.show .stats-content {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .stats-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .stats-body {
+            padding: 20px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            margin-bottom: 24px;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1A365D;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 4px;
+        }
+
+        .close-button {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #6b7280;
+            transition: color 0.2s;
+        }
+
+        .close-button:hover {
+            color: #ef4444;
+        }
+
+        .active-day {
+            color: #3B82F6;
+            font-weight: bold;
+        }
+
+        .highlight-bar {
+            background-color: #10b981;
+        }
+
+        /* Surrender Button Styles */
+        .surrender-btn {
+            min-width: 44px;
+            height: 44px;
+            font-size: 16px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .surrender-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .surrender-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="bg-fifa-white py-4 shadow-md sticky top-0 z-10">
+        <div class="container mx-auto px-4 flex justify-between items-center">
+            <div class="w-1/3 flex items-center">
+                <div class="w-10 h-10 rounded-full bg-fifa-blue flex items-center justify-center text-white">
+                    <i class="fas fa-futbol"></i>
+                </div>
+            </div>
+
+            <div class="w-1/3 flex justify-center">
+                <h1 class="text-3xl font-bold text-fifa-blue flex items-center title-clickable" onclick="window.location.href='index.html'">
+                    <span>TOUCH</span>
+                    <span class="text-fifa-accent relative ml-1">
+                        11
+                        <svg class="absolute -top-1 -right-3 w-4 h-4 text-fifa-accent" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"></path>
+                        </svg>
+                    </span>
+                </h1>
+            </div>
+
+            <div class="w-1/3"></div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-8">
+        <!-- Game Info Section (like wordle.html) -->
+        <div id="gameInfoSection" class="max-w-4xl mx-auto">
+            <!-- Title Section -->
+            <div class="text-center mb-8">
+                <h1 class="text-4xl font-bold text-fifa-blue mb-2">TOUCH11 LEGENDS</h1>
+                <h2 class="text-xl font-semibold text-fifa-light-blue mb-2">Football Challenge</h2>
+                <p class="text-gray-600">Build formations with world-class players</p>
+            </div>
+
+            <!-- How to Play Section -->
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden mb-8">
+                <div class="bg-gradient-to-r from-fifa-blue to-fifa-light-blue text-white p-6">
+                    <h2 class="text-2xl font-bold mb-2">How to Play</h2>
+                    <p class="text-lg">Football Legends is a game where your goal is to build a complete formation by placing players from different countries.</p>
+                </div>
+
+                <div class="p-6">
+                    <div class="grid md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <h3 class="text-lg font-bold text-fifa-blue mb-3">Game Rules</h3>
+                            <ul class="space-y-2 text-gray-700 text-sm">
+                                <li class="flex items-start">
+                                    <span class="text-fifa-accent mr-2">•</span>
+                                    Countries appear with their flag one by one
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="text-fifa-accent mr-2">•</span>
+                                    Type a player name from that country
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="text-fifa-accent mr-2">•</span>
+                                    Press Enter to place them in available positions
+                                </li>
+                                <li class="flex items-start">
+                                    <span class="text-fifa-accent mr-2">•</span>
+                                    Complete all positions to win!
+                                </li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            <h3 class="text-lg font-bold text-fifa-blue mb-3">Features</h3>
+                            <ul class="space-y-2 text-gray-700 text-sm">
+                                <li class="flex items-center">
+                                    <i class="fas fa-calendar-day text-fifa-accent mr-2"></i>
+                                    Daily formation challenge
+                                </li>
+                                <li class="flex items-center">
+                                    <i class="fas fa-globe text-fifa-accent mr-2"></i>
+                                    Players from multiple countries
+                                </li>
+                                <li class="flex items-center">
+                                    <i class="fas fa-futbol text-fifa-accent mr-2"></i>
+                                    Position-based player placement
+                                </li>
+                                <li class="flex items-center">
+                                    <i class="fas fa-search text-fifa-accent mr-2"></i>
+                                    Auto-complete player search
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Hard Mode Toggle -->
+                    <div class="bg-gray-50 rounded-lg p-4 mb-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h4 class="font-bold text-fifa-blue">Hard Mode</h4>
+                                <p class="text-sm text-gray-600">Disable auto-complete suggestions for extra challenge</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="hardModeToggle">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Start Game Button -->
+                    <div class="text-center">
+                        <button id="startGameBtn" class="bg-fifa-accent hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-lg text-lg transition duration-300">
+                            <i class="fas fa-play mr-2"></i>
+                            Start Today's Challenge
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Additional Info -->
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="bg-white rounded-xl p-6 shadow-lg text-center">
+                    <div class="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center text-white text-xl mx-auto mb-3">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-fifa-blue mb-2">Daily Challenge</h3>
+                    <p class="text-gray-600 text-sm">A new formation to complete every day. Come back daily to test your knowledge!</p>
+                </div>
+
+                <div class="bg-white rounded-xl p-6 shadow-lg text-center">
+                    <div class="w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center text-white text-xl mx-auto mb-3">
+                        <i class="fas fa-share-alt"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-fifa-blue mb-2">Share Results</h3>
+                    <p class="text-gray-600 text-sm">Challenge your friends by sharing your results and see who can complete formations faster.</p>
+                </div>
+
+                <div class="bg-white rounded-xl p-6 shadow-lg text-center">
+                    <div class="w-12 h-12 bg-orange-500 rounded-full flex items-center justify-center text-white text-xl mx-auto mb-3">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-fifa-blue mb-2">Track Progress</h3>
+                    <p class="text-gray-600 text-sm">Keep track of your stats and see how your formation-building skills improve over time.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Game Section -->
+        <div id="gameSection" class="hidden">
+            <div class="game-container">
+                <!-- Formation Grid -->
+                <div class="formation-grid">
+                    <div id="formationContainer" class="formation-4-3-3">
+                        <!-- Formation will be dynamically generated -->
+                    </div>
+                </div>
+
+                <!-- Game Controls -->
+                <div class="game-controls">
+                    <!-- Country Section (Left) -->
+                    <div class="country-section">
+                        <div class="text-xs text-gray-600 mb-2">Current Country</div>
+                        <img id="currentCountryFlag" class="country-flag" src="" alt="Country Flag">
+                        <div id="currentCountryName" class="text-sm font-bold text-fifa-blue">LOADING...</div>
+                    </div>
+
+                    <!-- Player Input Section (Right) -->
+                    <div class="player-input-section">
+                        <label for="playerInput" class="block text-sm font-medium text-gray-700 mb-2">
+                            <i class="fas fa-search mr-1"></i>Enter Player Name
+                        </label>
+                        <div class="relative flex items-center gap-2">
+                            <div class="relative flex-1">
+                                <input 
+                                    type="text" 
+                                    id="playerInput" 
+                                    class="player-input"
+                                    placeholder="Type player name..."
+                                    autocomplete="off"
+                                >
+                                <div id="suggestions" class="suggestions hidden"></div>
+                            </div>
+                            <button 
+                                id="surrenderBtn" 
+                                class="surrender-btn bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-md transition-colors duration-200 flex items-center justify-center"
+                                title="Surrender"
+                            >
+                                🏳️
+                            </button>
+                        </div>
+                        <div class="text-xs text-gray-500 mt-1">
+                            💡 Type and press Enter to place
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-fifa-blue text-white mt-16 py-8">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <h2 class="text-xl font-bold">TOUCH<span class="text-fifa-accent">11</span></h2>
+                    <p class="text-sm text-gray-300 mt-1">FWT Games</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Position Choice Modal -->
+    <div id="positionChoiceModal" class="position-choice-modal">
+        <div class="position-choice-content">
+            <h3 class="text-lg font-bold text-gray-800 mb-4">Choose Position</h3>
+            <p id="positionChoiceText" class="text-gray-600 mb-6"></p>
+            <div id="positionChoiceButtons"></div>
+        </div>
+    </div>
+
+    <!-- Surrender Confirmation Modal -->
+    <div id="surrenderModal" class="position-choice-modal" style="display: none;">
+        <div class="position-choice-content">
+            <h2 class="text-2xl font-bold text-red-600 mb-4">🏳️ Surrender Game</h2>
+            <div class="mb-6">
+                <p class="text-lg font-semibold text-gray-800 mb-2">Are you sure you want to surrender?</p>
+                <p class="text-gray-600">This will count as a loss in your daily score.</p>
+            </div>
+            <div class="flex gap-4 justify-center">
+                <button id="confirmSurrenderBtn" class="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-md transition-colors">
+                    Yes, Surrender
+                </button>
+                <button id="cancelSurrenderBtn" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-md transition-colors">
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stats Modal (Same as Wordle) -->
+    <div id="statsModal" class="stats-modal">
+        <div class="stats-content">
+            <div class="stats-header">
+                <h2 class="text-xl font-bold text-fifa-blue">Statistics</h2>
+                <button id="closeStatsBtn" class="close-button">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="stats-body">
+                <!-- Stats Grid -->
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div id="statPlayed" class="stat-value">0</div>
+                        <div class="stat-label">Played</div>
+                    </div>
+                    <div class="stat-item">
+                        <div id="statWins" class="stat-value">0</div>
+                        <div class="stat-label">Wins</div>
+                    </div>
+                    <div class="stat-item">
+                        <div id="statPercentage" class="stat-value">0%</div>
+                        <div class="stat-label">Win %</div>
+                    </div>
+                    <div class="stat-item">
+                        <div id="statStreak" class="stat-value">0</div>
+                        <div class="stat-label">Streak</div>
+                    </div>
+                    <div class="stat-item">
+                        <div id="statMaxStreak" class="stat-value">0</div>
+                        <div class="stat-label">Max Streak</div>
+                    </div>
+                </div>
+
+                <!-- Weekly Victory Distribution -->
+                <div class="stats-distribution">
+                    <h3 class="text-sm font-semibold text-fifa-blue mb-3">Weekly Victory Distribution</h3>
+                    <div class="stats-row">
+                        <div class="stats-number">1</div>
+                        <div class="stats-day-label">Mon</div>
+                        <div class="stats-bar-container">
+                            <div class="stats-bar" id="weekBar1">
+                                <span class="stats-bar-value">0</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="stats-row">
+                        <div class="stats-number">2</div>
+                        <div class="stats-day-label">Tue</div>
+                        <div class="stats-bar-container">
+                            <div class="stats-bar" id="weekBar2">
+                                <span class="stats-bar-value">0</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="stats-row">
+                        <div class="stats-number">3</div>
+                        <div class="stats-day-label">Wed</div>
+                        <div class="stats-bar-container">
+                            <div class="stats-bar" id="weekBar3">
+                                <span class="stats-bar-value">0</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="stats-row">
+                        <div class="stats-number">4</div>
+                        <div class="stats-day-label">Thu</div>
+                        <div class="stats-bar-container">
+                            <div class="stats-bar" id="weekBar4">
+                                <span class="stats-bar-value">0</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="stats-row">
+                        <div class="stats-number">5</div>
+                        <div class="stats-day-label">Fri</div>
+                        <div class="stats-bar-container">
+                            <div class="stats-bar" id="weekBar5">
+                                <span class="stats-bar-value">0</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="stats-row">
+                        <div class="stats-number">6</div>
+                        <div class="stats-day-label">Sat</div>
+                        <div class="stats-bar-container">
+                            <div class="stats-bar" id="weekBar6">
+                                <span class="stats-bar-value">0</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="stats-row">
+                        <div class="stats-number">7</div>
+                        <div class="stats-day-label">Sun</div>
+                        <div class="stats-bar-container">
+                            <div class="stats-bar" id="weekBar7">
+                                <span class="stats-bar-value">0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="dailyGameManager.js"></script>
+    <script src="touch11LegendsGame.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async function() {
+            console.log('Touch11 Legends Updated loaded successfully!');
+
+            // Initialize daily game manager
+            const manager = window.dailyGameManager;
+            if (manager) {
+                await manager.init();
+            }
+
+            // Initialize the legends game
+            if (window.touch11LegendsGame) {
+                await window.touch11LegendsGame.init();
+            }
+        });
+    </script>
+</body>
+</html>
